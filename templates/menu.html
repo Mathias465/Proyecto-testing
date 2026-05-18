@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Menú - Sistema de Notas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/menu.css') }}">
+</head>
+
+<body>
+
+<div class="toast-container">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% if mensajes %}
+            {% for categoria, mensaje in mensajes %}
+                <div class="toast toast-{{ categoria }}">
+                    <span>{{ mensaje }}</span>
+                    <button type="button" onclick="this.parentElement.remove()">×</button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+<main class="layout">
+
+    <section class="panel-principal">
+
+        <header class="topbar">
+            <div>
+                <h1>Sistema de Registro de Notas</h1>
+                <p>Gestión académica de alumnos y calificaciones</p>
+            </div>
+
+            <div class="usuario-box">
+                <span class="usuario-nombre">{{ usuario }}</span>
+
+                {% if rol == "admin" %}
+                    <span class="rol rol-admin">Administrador</span>
+                {% elif rol == "profesor" %}
+                    <span class="rol rol-profesor">Profesor</span>
+                {% else %}
+                    <span class="rol">Usuario</span>
+                {% endif %}
+            </div>
+        </header>
+
+        <section class="estado-card">
+            <div>
+                <h2>Periodo de registro</h2>
+                <p>{{ fecha_inicio }} - {{ fecha_fin }}</p>
+            </div>
+
+            {% if estado == "activo" %}
+                <div class="estado estado-activo">Registro activo</div>
+            {% elif estado == "no_iniciado" %}
+                <div class="estado estado-no">Aún no inicia</div>
+            {% else %}
+                <div class="estado estado-fin">Registro finalizado</div>
+            {% endif %}
+        </section>
+
+        <section class="grid-acciones">
+
+            {% if rol == "admin" %}
+            <article class="card accion-card">
+                <div class="card-header">
+                    <h3>Registrar alumno</h3>
+                    <p>Agrega nuevos estudiantes al sistema.</p>
+                </div>
+
+                <form action="{{ url_for('registrar_alumno') }}" method="POST" class="formulario">
+                    <div class="campo">
+                        <label for="codigo">Código del alumno</label>
+                        <input 
+                            type="text" 
+                            id="codigo" 
+                            name="codigo" 
+                            placeholder="Ejemplo: A001"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="nombre">Nombre del alumno</label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            placeholder="Ejemplo: Juan Pérez"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-admin">
+                        Registrar alumno
+                    </button>
+                </form>
+            </article>
+            {% endif %}
+
+            {% if rol == "profesor" %}
+            <article class="card accion-card">
+                <div class="card-header">
+                    <h3>Registrar nota</h3>
+                    <p>Ingresa una nota entre 0 y 20 o registra NSP.</p>
+                </div>
+
+                <form action="{{ url_for('registrar_nota') }}" method="POST" class="formulario">
+                    <div class="campo">
+                        <label for="codigo">Código del estudiante</label>
+                        <input 
+                            type="text" 
+                            id="codigo" 
+                            name="codigo" 
+                            placeholder="Código estudiante"
+                            required
+                        >
+                    </div>
+
+                    <div class="campo">
+                        <label for="nota">Nota</label>
+                        <input 
+                            type="text" 
+                            id="nota" 
+                            name="nota" 
+                            placeholder="Nota 0-20 o NSP"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-profesor">
+                        Guardar nota
+                    </button>
+                </form>
+            </article>
+            {% endif %}
+
+        </section>
+
+        <section class="card estudiantes-card">
+            <div class="card-header estudiantes-header">
+                <div>
+                    <h3>Estudiantes registrados</h3>
+                    <p>Consulta el historial académico de cada alumno.</p>
+                </div>
+
+                <span class="contador">{{ estudiantes|length }} alumnos</span>
+            </div>
+
+            {% if estudiantes %}
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Alumno</th>
+                                <th>Notas</th>
+                                <th>Historial</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for alumno in estudiantes %}
+                            <tr>
+                                <td>
+                                    <span class="codigo">{{ alumno.codigo }}</span>
+                                </td>
+
+                                <td class="nombre-alumno">
+                                    {{ alumno.nombre }}
+                                </td>
+
+                                <td>
+                                    <span class="notas-badge">
+                                        {{ alumno.total_notas }}/3 notas
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <a class="btn-tabla" href="{{ url_for('historial', codigo=alumno.codigo) }}">
+                                        Ver historial
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="sin-datos">
+                    <p>No hay estudiantes registrados todavía.</p>
+                </div>
+            {% endif %}
+        </section>
+
+        <footer class="footer">
+            <a href="{{ url_for('logout') }}" class="btn-logout">
+                Cerrar sesión
+            </a>
+        </footer>
+
+    </section>
+
+</main>
+
+<script>
+    setTimeout(() => {
+        const toasts = document.querySelectorAll(".toast");
+        toasts.forEach((toast) => {
+            toast.remove();
+        });
+    }, 4500);
+</script>
+
+</body>
+</html>

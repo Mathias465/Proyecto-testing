@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de notas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/historial.css') }}">
+</head>
+<body>
+
+    <main class="contenedor">
+
+        <section class="card-historial">
+
+            <div class="encabezado">
+                <div>
+                    <h1>Historial de notas</h1>
+                    <p>Detalle académico del alumno seleccionado</p>
+                </div>
+
+                <span class="badge-codigo">Código: {{ codigo }}</span>
+            </div>
+
+            <div class="info-alumno">
+                <div class="dato">
+                    <span>Alumno</span>
+                    <strong>{{ estudiante.nombre }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Promedio</span>
+                    <strong>{{ promedio }}</strong>
+                </div>
+
+                <div class="dato">
+                    <span>Estado</span>
+
+                    {% if estado == "Aprobado" %}
+                        <strong class="estado aprobado">{{ estado }}</strong>
+                        {% elif estado == "NSP" %}
+                        <strong class="estado nsp">{{ estado }}</strong>
+                        {% else %}
+                        <strong class="estado desaprobado">{{ estado }}</strong>
+                    {% endif %}
+                </div>
+            </div>
+
+            <h2>Notas registradas</h2>
+
+            {% if estudiante.notas %}
+                <div class="tabla-contenedor">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>N°</th>
+                                <th>Nota</th>
+                                <th>Condición</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for nota in estudiante.notas %}
+                                <tr>
+                                    <td>{{ loop.index }}</td>
+
+                                    <td>
+                                        {% if nota.es_nsp %}
+                                            <span class="nota nsp">NSP</span>
+                                        {% else %}
+                                            <span class="nota">{{ nota.valor }}</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if nota.es_nsp %}
+                                            <span class="condicion pendiente">No se presentó</span>
+                                        {% elif nota.valor >= 11 %}
+                                            <span class="condicion aprobado">Aprobado</span>
+                                        {% else %}
+                                            <span class="condicion desaprobado">Desaprobado</span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td class="acciones">
+                                        {% if rol == "profesor" %}
+                                            <a class="btn editar" href="{{ url_for('editar_nota', nota_id=nota.id) }}">
+                                                Editar
+                                            </a>
+
+                                            <a class="btn eliminar" href="{{ url_for('eliminar_nota', nota_id=nota.id) }}"
+                                            onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">
+                                                Eliminar
+                                            </a>
+                                        {% else %}
+                                            <span class="sin-acciones">Solo lectura</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="sin-notas">
+                    <p>Este alumno todavía no tiene notas registradas.</p>
+                </div>
+            {% endif %}
+
+            <div class="footer-card">
+                <a class="btn volver" href="{{ url_for('menu') }}">Volver al menú</a>
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>

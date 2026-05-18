@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar nota</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editar.css') }}">
+</head>
+
+<body>
+
+<main class="editar-page">
+
+    <section class="editar-card">
+
+        <div class="editar-header">
+            <div class="icono">✏️</div>
+            <h1>Editar nota</h1>
+            <p>Modifica la calificación registrada para el alumno seleccionado.</p>
+        </div>
+
+        <div class="info-alumno">
+            <div class="dato">
+                <span>Alumno</span>
+                <strong>{{ nota.nombre }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>Código</span>
+                <strong>{{ nota.estudiante_codigo }}</strong>
+            </div>
+
+            <div class="dato">
+                <span>Nota actual</span>
+
+                {% if nota.es_nsp %}
+                    <strong class="nota-actual nsp">NSP</strong>
+                {% else %}
+                    <strong class="nota-actual">{{ nota.valor }}</strong>
+                {% endif %}
+            </div>
+        </div>
+
+        <form method="post" class="formulario-editar">
+
+            <div class="campo">
+                <label for="nota">Nueva nota</label>
+
+                <input 
+                    type="text"
+                    id="nota"
+                    name="nota"
+                    value="{% if nota.es_nsp %}NSP{% else %}{{ nota.valor }}{% endif %}"
+                    placeholder="Ingrese una nota entre 0 y 20 o NSP"
+                    required
+                >
+
+                <small>Puede ingresar una nota entre 0 y 20, o escribir NSP si el alumno no se presentó.</small>
+            </div>
+
+            <div class="acciones">
+                <button type="submit" class="btn guardar">
+                    Guardar cambios
+                </button>
+
+                <a href="{{ url_for('historial', codigo=nota.estudiante_codigo) }}" class="btn cancelar">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+</body>
+</html>
