@@ -1,0 +1,31 @@
+﻿Enlace de la web:
+http://localhost:5000/
+
+Dependencias:
+pip install flask
+pip install pytest flask
+
+
+cd C:\ruta del archivo \Testing---Proyect
+.\.venv\Scripts\python.exe -m pip install flask pytest
+.\.venv\Scripts\python.exe -m pytest -v
+
+py -m venv .venv
+Para ejecutar los casos de prueba:
+python -m pytest -v
+
+
+python crear_usuarios.py
+python app.py
+
+
+//para la DB se tiene que importar en Mysql
+CAMBIAR LAS CREDENCIALES //USUARIO Y CONTRASEÑA del archivo db.py por las propias
+
+USUARIOS DISPONIBLES
+ADMINISTRADOR:
+	USUARIO: admin
+	CONTRASEÑA: admin123
+PROFESOR:
+	USUARIO: profe1
+	CONTRASEÑA: 1234
